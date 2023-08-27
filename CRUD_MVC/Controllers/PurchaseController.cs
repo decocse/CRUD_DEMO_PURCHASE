@@ -99,5 +99,50 @@ namespace CRUD_MVC.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Delete(int id) 
+        {
+            try
+            {
+                Purchase purchase = new Purchase();
+                HttpResponseMessage response = _httpClient.GetAsync(_httpClient.BaseAddress + "/purchases/GetPurchase/" + id).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = response.Content.ReadAsStringAsync().Result;
+                    purchase = JsonConvert.DeserializeObject<Purchase>(data);
+                }
+                return View(purchase);
+            }
+            catch (Exception ex)
+            {
+
+                return View(ex.Message);
+            }
+
+        }
+        [HttpPost]
+        public IActionResult Delete(Purchase model) 
+        {
+            try
+            {
+               // string data = JsonConvert.SerializeObject(model);
+                //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+
+                //string idmp = model.ID.ToString();
+                HttpResponseMessage response = _httpClient.DeleteAsync(_httpClient.BaseAddress + "/Purchases/DeletePurchase/" + model.ID).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+            catch(Exception ex)
+            {
+                return View(ex.Message);
+            }
+            return View();
+        }
+
+
     }
 }
